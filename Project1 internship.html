@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizSolution Co. - Comprehensive Business Solutions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        /* Cross-Browser Compatibility Fix: Ensure padding and border are inside the element's defined width/height */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7fa; /* Slightly darker light grey background for depth */
+        }
+        
+        /* Smooth transition for page content */
+        .page-content {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            min-height: 70vh; /* Ensure a minimum height to prevent footer jump */
+        }
+        .page-content.active {
+            opacity: 1;
+        }
+        
+        /* Base Modal Styles */
+        .modal-base {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.7); /* Darker overlay for better focus */
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-base.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            max-height: 90vh; /* Responsive height */
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s ease-in-out;
+        }
+        .modal-base.visible .modal-content {
+            transform: translateY(0);
+        }
+        
+        /* Ensure all interactive elements have visible focus */
+        a:focus, button:focus, input:focus, textarea:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.5); /* Indigo-500 equivalent focus ring */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- 1. RESPONSIVE NAVIGATION HEADER -->
+    <header class="bg-white shadow-lg sticky top-0 z-20" role="banner">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo/Brand Name -->
+                <a href="#" onclick="renderPage('home'); return false;" class="text-2xl font-extrabold text-indigo-700 hover:text-indigo-900 transition duration-300 rounded-lg p-2 focus:outline-none focus:ring-4 focus:ring-indigo-300" aria-label="Go to Home Page">
+                    BizSolution Co.
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex space-x-8" aria-label="Main Navigation">
+                    <a href="#home" data-page="home" class="nav-link text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md font-medium transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">Home</a>
+                    <a href="#services" data-page="services" class="nav-link text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md font-medium transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">Services</a>
+                    <a href="#about" data-page="about" class="nav-link text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md font-medium transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">About Us</a>
+                    <a href="#contact" data-page="contact" class="nav-link text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg font-medium transition duration-300 shadow-md focus:outline-none focus:ring-4 focus:ring-indigo-300">Contact</a>
+                </nav>
+
+                <!-- Mobile Menu Button (Hamburger) -->
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 transition duration-300" 
+                        aria-label="Toggle main menu" 
+                        aria-expanded="false" 
+                        aria-controls="mobile-menu">
+                    <svg class="h-6 w-6 block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
+            <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3" aria-label="Mobile Navigation">
+                <a href="#home" data-page="home" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">Home</a>
+                <a href="#services" data-page="services" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">Services</a>
+                <a href="#about" data-page="about" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">About Us</a>
+                <a href="#contact" data-page="contact" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 2. MAIN CONTENT AREA -->
+    <main id="app-content" class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8" role="main" aria-live="polite" tabindex="-1">
+        <!-- Page content will be injected here -->
+    </main>
+    
+    <!-- Service Detail Modal (New Modal for detailed info) -->
+    <div id="service-detail-modal" class="modal-base" role="dialog" aria-modal="true" aria-labelledby="service-modal-title" tabindex="-1">
+        <div class="modal-content bg-white rounded-xl shadow-2xl max-w-3xl w-full p-8 mx-4" role="document">
+            <div class="flex items-center mb-4 border-b pb-2 border-indigo-200">
+                <div id="service-modal-icon" class="mr-3"></div>
+                <h3 id="service-modal-title" class="text-3xl font-bold text-gray-900"></h3>
+            </div>
+            <div id="service-modal-body" class="text-gray-700 space-y-4">
+                <!-- Detailed content will be injected here -->
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button onclick="hideServiceDetail()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300 shadow-md focus:outline-none focus:ring-4 focus:ring-indigo-300">
+                    Close Details
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Custom Message Box (Replaces alert() - for form submission status) -->
+    <div id="message-box" class="modal-base" role="dialog" aria-modal="true" aria-labelledby="message-title" tabindex="-1">
+        <div class="modal-content p-6 bg-white rounded-xl shadow-2xl max-w-sm w-full text-center border-t-4 border-indigo-600" role="document">
+            <h3 id="message-title" class="text-xl font-bold text-gray-900 mb-2"></h3>
+            <p id="message-text" class="text-gray-600 mb-4"></p>
+            <button onclick="hideMessage()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-300">Close</button>
+        </div>
+    </div>
+
+    <!-- 3. SIMPLE FOOTER -->
+    <footer class="bg-gray-800 text-white mt-auto" role="contentinfo">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm">&copy; 2025 BizSolution Co. All rights reserved. | <span id="user-id-display" class="text-indigo-400">User ID: Loading...</span></p>
+        </div>
+    </footer>
+
+
+    <!-- Firebase SDK Imports (Module setup) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, addDoc, collection, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // --- Firebase Globals & Initialization ---
+        let db;
+        let auth;
+        let userId = 'Loading...';
+        let appId;
+        let isFirebaseReady = false;
+
+        // Global variable to store the previously focused element before a modal opened
+        let focusedElementBeforeModal = null;
+
+
+        // Utility function for managing modal focus
+        function trapFocus(modalElement) {
+            focusedElementBeforeModal = document.activeElement;
+            
+            const focusableElements = modalElement.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            const firstFocusable = focusableElements[0];
+            const lastFocusable = focusableElements[focusableElements.length - 1];
+
+            if (firstFocusable) {
+                firstFocusable.focus();
+            } else {
+                modalElement.focus();
+            }
+
+            modalElement.addEventListener('keydown', (e) => {
+                const isTabPressed = (e.key === 'Tab' || e.keyCode === 9);
+
+                if (!isTabPressed) {
+                    return;
+                }
+
+                if (e.shiftKey) { // Shift + Tab
+                    if (document.activeElement === firstFocusable) {
+                        lastFocusable.focus();
+                        e.preventDefault();
+                    }
+                } else { // Tab
+                    if (document.activeElement === lastFocusable) {
+                        firstFocusable.focus();
+                        e.preventDefault();
+                    }
+                }
+            });
+        }
+        
+        function restoreFocus() {
+            if (focusedElementBeforeModal) {
+                focusedElementBeforeModal.focus();
+                focusedElementBeforeModal = null;
+            } else {
+                // Focus the main content area after closing the modal
+                document.getElementById('app-content').focus(); 
+            }
+        }
+
+        // --- Message Box Functions ---
+        window.showMessage = (title, message) => {
+            const msgBox = document.getElementById('message-box');
+            document.getElementById('message-title').textContent = title;
+            document.getElementById('message-text').textContent = message;
+            
+            msgBox.classList.add('visible');
+            trapFocus(msgBox); // Trap focus on message box
+        };
+
+        window.hideMessage = () => {
+            document.getElementById('message-box').classList.remove('visible');
+            restoreFocus();
+        };
+
+        // --- Service Detail Modal Functions ---
+        const serviceIcons = {
+            digital: `<svg class="w-8 h-8 text-indigo-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>`,
+            cloud: `<svg class="w-8 h-8 text-indigo-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l7.5-7.5 7.5 7.5 7.5-7.5" /></svg>`,
+            security: `<svg class="w-8 h-8 text-indigo-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75l3 3 7.5-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
+        };
+        
+        const serviceData = {
+            digital: {
+                title: "Digital Transformation & Strategy",
+                content: `
+                    <p>Our Digital Transformation service helps businesses modernize operations, enhance customer experience, and unlock new revenue streams. We focus on integrating technology seamlessly into every facet of your organization.</p>
+                    <h4 class="text-xl font-semibold text-gray-800 mt-4">Key Focus Areas:</h4>
+                    <ul class="list-disc list-inside ml-4 space-y-2">
+                        <li><strong>Strategic Roadmapping:</strong> Defining clear, phased plans for technology adoption.</li>
+                        <li><strong>Process Automation:</strong> Implementing AI and robotic process automation (RPA) to streamline workflows.</li>
+                        <li><strong>Customer Experience (CX) Optimization:</strong> Designing seamless multi-channel user journeys.</li>
+                        <li><strong>Legacy System Modernization:</strong> Migrating old systems to scalable, secure cloud environments.</li>
+                    </ul>
+                    <p class="mt-4 p-3 bg-indigo-50 rounded-lg text-sm italic">
+                        By focusing on both technology and culture, we ensure your team is ready to embrace the future of work and stay ahead of market trends.
+                    </p>
+                `
+            },
+            cloud: {
+                title: "Cloud Infrastructure & DevOps Mastery",
+                content: `
+                    <p>We provide expert management of cloud resources, guaranteeing high availability, resilience, and cost efficiency across all major providers (AWS, Azure, GCP). Our DevOps approach accelerates your development lifecycle.</p>
+                    <h4 class="text-xl font-semibold text-gray-800 mt-4">Core Offerings:</h4>
+                    <ul class="list-disc list-inside ml-4 space-y-2">
+                        <li><strong>Cost Optimization:</strong> Advanced techniques to reduce operational expenditures without sacrificing performance.</li>
+                        <li><strong>Infrastructure as Code (IaC):</strong> Using Terraform and Ansible for repeatable, reliable deployments.</li>
+                        <li><strong>CI/CD Implementation:</strong> Setting up automated pipelines for continuous integration and delivery.</li>
+                        <li><strong>Migration Services:</strong> Seamlessly moving on-premise infrastructure to the cloud with zero downtime.</li>
+                    </ul>
+                    <p class="mt-4 p-3 bg-indigo-50 rounded-lg text-sm italic">
+                        Achieve unparalleled speed-to-market and reliability through automated infrastructure management and cloud security best practices.
+                    </p>
+                `
+            },
+            security: {
+                title: "Managed Cybersecurity & Compliance",
+                content: `
+                    <p>Protecting your organization from evolving threats requires constant vigilance. Our managed security services ensure your data and operations remain secure and compliant with global standards.</p>
+                    <h4 class="text-xl font-semibold text-gray-800 mt-4">Security Pillars:</h4>
+                    <ul class="list-disc list-inside ml-4 space-y-2">
+                        <li><strong>24/7 Threat Detection:</strong> Security Information and Event Management (SIEM) monitoring and rapid response.</li>
+                        <li><strong>Vulnerability Management:</strong> Regular penetration testing, security reviews, and proactive patch management.</li>
+                        <li><strong>Compliance Audits:</strong> Meeting GDPR, HIPAA, ISO 27001, and other regulatory standards, reducing risk of fines.</li>
+                        <li><strong>Incident Response:</strong> Developing and executing rapid response plans to minimize breach impact and recovery time.</li>
+                    </ul>
+                    <p class="mt-4 p-3 bg-indigo-50 rounded-lg text-sm italic">
+                        We transform security from a cost center into a core business strength, allowing you to operate with confidence.
+                    </p>
+                `
+            }
+        };
+
+        window.showServiceDetail = (serviceKey) => {
+            const data = serviceData[serviceKey];
+            const modal = document.getElementById('service-detail-modal');
+            
+            if (!data) {
+                showMessage("Error", "Service details not found.");
+                return;
+            }
+
+            document.getElementById('service-modal-icon').innerHTML = serviceIcons[serviceKey];
+            document.getElementById('service-modal-title').textContent = data.title;
+            document.getElementById('service-modal-body').innerHTML = data.content;
+
+            modal.classList.add('visible');
+            trapFocus(modal);
+        };
+
+        window.hideServiceDetail = () => {
+            document.getElementById('service-detail-modal').classList.remove('visible');
+            restoreFocus();
+        };
+
+        // --- Form Submission Function ---
+        window.submitContactForm = async (event) => {
+            event.preventDefault();
+            
+            if (!isFirebaseReady) {
+                showMessage("System Error", "Database connection not ready. Please try again in a moment.");
+                console.error("Firebase not ready for form submission.");
+                return;
+            }
+
+            const form = event.target;
+            const name = form.name.value;
+            const email = form.email.value;
+            const phone = form.phone.value;
+            const subject = form.subject.value;
+            const message = form.message.value;
+            const submitButton = form.querySelector('button[type="submit"]');
+
+            if (!name || !email || !subject || !message) {
+                showMessage("Validation Error", "Please fill out all required fields.");
+                return;
+            }
+
+            submitButton.textContent = 'Sending...';
+            submitButton.disabled = true;
+            submitButton.classList.add('opacity-70');
+
+            try {
+                // Public Collection path: /artifacts/{appId}/public/data/inquiries
+                const inquiryCollectionPath = `artifacts/${appId}/public/data/inquiries`;
+                
+                await addDoc(collection(db, inquiryCollectionPath), {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    subject: subject,
+                    message: message,
+                    userId: userId,
+                    timestamp: new Date().toISOString()
+                });
+
+                showMessage("Success!", "Thank you! Your inquiry has been successfully sent to BizSolution Co. We will respond shortly.");
+                form.reset(); 
+
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                showMessage("Submission Failed", "There was an error sending your message. Please check the console for details.");
+            } finally {
+                submitButton.textContent = 'Send Message';
+                submitButton.disabled = false;
+                submitButton.classList.remove('opacity-70');
+            }
+        };
+
+
+        async function initializeFirebase() {
+            try {
+                // setLogLevel('debug'); // Commented out for final polish, but useful for debugging
+                
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+                if (!firebaseConfig || !Object.keys(firebaseConfig).length) {
+                    console.warn("Firebase configuration is missing. Data storage will not work.");
+                    isFirebaseReady = true;
+                    document.getElementById('user-id-display').textContent = 'User ID: N/A (Offline Mode)';
+                    return;
+                }
+
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                await setPersistence(auth, browserLocalPersistence);
+
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Firebase Auth Ready. User ID:", userId);
+                        document.getElementById('user-id-display').textContent = `User ID: ${userId}`;
+                        isFirebaseReady = true;
+                    } else {
+                        console.log("Firebase Auth Ready. Signed in anonymously.");
+                        document.getElementById('user-id-display').textContent = 'User ID: Anonymous';
+                        isFirebaseReady = true;
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+                showMessage("System Error", "Could not connect to the database. Check console for details.");
+            }
+        }
+        
+        initializeFirebase();
+
+        // --- Core Application Logic (Outside of module imports) ---
+        // 3.1. PAGE CONTENT DEFINITION
+        window.pageContent = {
+            home: `
+                <section class="page-content bg-white p-8 md:p-12 rounded-xl shadow-2xl mb-8 border-t-8 border-indigo-600" aria-labelledby="home-heading">
+                    <h1 id="home-heading" class="text-5xl lg:text-6xl font-extrabold text-gray-900 mb-4">Elevating Your Business Vision</h1>
+                    <p class="text-xl text-indigo-600 mb-8 max-w-3xl">Innovative Solutions for a Digital Tomorrow and Strategic Growth.</p>
+                    
+                    <div class="space-y-6 text-gray-700 leading-relaxed text-lg">
+                        <p>Welcome to BizSolution Co., your dedicated partner in achieving operational excellence and strategic success. We specialize in transforming complex business challenges into streamlined, effective solutions using cutting-edge technology and data-driven insights.</p>
+                        <p>Our commitment is to deliver measurable value through robust digital, cloud, and security strategies, ensuring your business is not just keeping up, but leading the way in your industry.</p>
+                    </div>
+                    
+                    <button onclick="renderPage('services')" class="mt-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 shadow-xl transform hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-indigo-300">
+                        Explore Our Services
+                    </button>
+                </section>
+            `,
+            services: `
+                <section class="page-content bg-white p-8 rounded-xl shadow-2xl" aria-labelledby="services-heading">
+                    <h2 id="services-heading" class="text-4xl font-extrabold text-gray-900 mb-3 text-center">Our Advanced Solutions</h2>
+                    <p class="text-xl text-gray-600 mb-12 text-center max-w-3xl mx-auto">
+                        Specialized services designed to drive efficiency, maximize security, and unlock new potential for your enterprise. Click 'Learn More' for detailed offerings.
+                    </p>
+
+                    <!-- SERVICES GRID CONTAINER -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" role="list">
+                        
+                        <!-- Service Card 1: Digital Strategy -->
+                        <div class="p-6 bg-indigo-50 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-t-4 border-indigo-600 transform hover:scale-[1.01]" role="listitem">
+                            <div class="mb-4 inline-block p-3 rounded-full bg-indigo-600 text-white">
+                                ${serviceIcons.digital}
+                            </div>
+                            <h3 class="text-2xl font-semibold text-gray-900 mb-3">Digital Transformation</h3>
+                            <p class="text-gray-600 mb-4 h-20 overflow-hidden">
+                                Future-proof your business with a tailored digital roadmap. We integrate modern cloud solutions, process automation, and change management to ensure seamless evolution.
+                            </p>
+                            <a href="#" onclick="showServiceDetail('digital'); return false;" class="text-indigo-600 hover:text-indigo-800 font-bold inline-flex items-center focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md">
+                                Learn More
+                                <svg class="ml-1 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                        </div>
+
+                        <!-- Service Card 2: Cloud Infrastructure -->
+                        <div class="p-6 bg-indigo-50 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-t-4 border-indigo-600 transform hover:scale-[1.01]" role="listitem">
+                            <div class="mb-4 inline-block p-3 rounded-full bg-indigo-600 text-white">
+                                ${serviceIcons.cloud}
+                            </div>
+                            <h3 class="text-2xl font-semibold text-gray-900 mb-3">Cloud & DevOps</h3>
+                            <p class="text-gray-600 mb-4 h-20 overflow-hidden">
+                                Scale effortlessly and reduce costs with optimized cloud architecture. Implement CI/CD pipelines for rapid, reliable software deployment and continuous delivery.
+                            </p>
+                            <a href="#" onclick="showServiceDetail('cloud'); return false;" class="text-indigo-600 hover:text-indigo-800 font-bold inline-flex items-center focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md">
+                                Learn More
+                                <svg class="ml-1 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                        </div>
+
+                        <!-- Service Card 3: Cybersecurity -->
+                        <div class="p-6 bg-indigo-50 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-t-4 border-indigo-600 transform hover:scale-[1.01]" role="listitem">
+                            <div class="mb-4 inline-block p-3 rounded-full bg-indigo-600 text-white">
+                                ${serviceIcons.security}
+                            </div>
+                            <h3 class="text-2xl font-semibold text-gray-900 mb-3">Managed Security</h3>
+                            <p class="text-gray-600 mb-4 h-20 overflow-hidden">
+                                Protect your critical assets with 24/7 threat monitoring, vulnerability assessments, and robust compliance strategies tailored to your industry standards.
+                            </p>
+                            <a href="#" onclick="showServiceDetail('security'); return false;" class="text-indigo-600 hover:text-indigo-800 font-bold inline-flex items-center focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md">
+                                Learn More
+                                <svg class="ml-1 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                        </div>
+                    </div> 
+
+                    <div class="mt-12 text-center p-8 bg-indigo-100 rounded-xl shadow-inner border-t border-indigo-200">
+                        <h4 class="text-2xl font-bold text-indigo-800 mb-3">Ready to Start?</h4>
+                        <p class="text-indigo-700 mb-6">Schedule a free consultation to discuss how our solutions can integrate with your business goals.</p>
+                        <button onclick="renderPage('contact')" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-3 px-8 rounded-lg transition duration-300 shadow-md focus:outline-none focus:ring-4 focus:ring-indigo-300">
+                            Book a Consultation
+                        </button>
+                    </div>
+
+                </section>
+            `,
+            about: `
+                <section class="page-content bg-white p-8 rounded-xl shadow-2xl space-y-12" aria-labelledby="about-heading">
+                    
+                    <!-- About Header and Mission Statement -->
+                    <div>
+                        <h2 id="about-heading" class="text-5xl font-extrabold text-gray-900 mb-4">About BizSolution Co.</h2>
+                        <p class="text-xl text-indigo-600 mb-10 max-w-4xl border-b pb-4 border-indigo-100">
+                            Our purpose is to accelerate growth and foster innovation by delivering strategic clarity and robust technological solutions.
+                        </p>
+                        
+                        <!-- Core Values Section (Responsive Grid) -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center" role="list">
+                            <div class="p-6 bg-gray-50 rounded-lg border-l-4 border-indigo-500 shadow-sm" role="listitem">
+                                <span class="text-3xl font-bold text-indigo-700 block mb-2">Integrity</span>
+                                <p class="text-gray-600 text-sm">Honesty and transparency in all client engagements and decision-making processes.</p>
+                            </div>
+                            <div class="p-6 bg-gray-50 rounded-lg border-l-4 border-indigo-500 shadow-sm" role="listitem">
+                                <span class="text-3xl font-bold text-indigo-700 block mb-2">Innovation</span>
+                                <p class="text-gray-600 text-sm">Driving solutions with cutting-edge, future-proof technology and continuous learning.</p>
+                            </div>
+                            <div class="p-6 bg-gray-50 rounded-lg border-l-4 border-indigo-500 shadow-sm" role="listitem">
+                                <span class="text-3xl font-bold text-indigo-700 block mb-2">Excellence</span>
+                                <p class="text-gray-600 text-sm">Committing to the highest quality in every deliverable and striving for client success.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Meet The Team Section -->
+                    <div class="pt-8 border-t border-gray-200">
+                        <h3 class="text-4xl font-bold text-gray-900 mb-10 text-center">Meet Our Leadership</h3>
+                        
+                        <!-- Team Member Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" role="list">
+                            
+                            <!-- Team Member 1: CEO -->
+                            <div class="text-center p-6 bg-indigo-50 rounded-xl shadow-md transition duration-300 hover:shadow-lg" role="listitem">
+                                <img src="https://placehold.co/150x150/6366f1/ffffff?text=CEO" onerror="this.onerror=null; this.src='https://placehold.co/150x150/6366f1/ffffff?text=CEO_Fallback';" alt="Portrait of Jai Agnani , Chief Executive Officer" 
+                                     class="w-36 h-36 rounded-full mx-auto mb-4 object-cover border-4 border-indigo-300">
+                                <h4 class="text-xl font-bold text-gray-900">Jai Agnani</h4>
+                                <p class="text-indigo-600 font-medium mb-3">Chief Executive Officer</p>
+                                <p class="text-sm text-gray-600">
+                                    Jai brings over 20 years of strategic consulting experience and is passionate about digital transformation.
+                                </p>
+                            </div>
+
+                            <!-- Team Member 2: CTO -->
+                            <div class="text-center p-6 bg-indigo-50 rounded-xl shadow-md transition duration-300 hover:shadow-lg" role="listitem">
+                                <img src="https://placehold.co/150x150/6366f1/ffffff?text=CTO" onerror="this.onerror=null; this.src='https://placehold.co/150x150/6366f1/ffffff?text=CTO_Fallback';" alt="Portrait of Manav Batra, Chief Technology Officer" 
+                                     class="w-36 h-36 rounded-full mx-auto mb-4 object-cover border-4 border-indigo-300">
+                                <h4 class="text-xl font-bold text-gray-900">Manav Batra</h4>
+                                <p class="text-indigo-600 font-medium mb-3">Chief Technology Officer</p>
+                                <p class="text-sm text-gray-600">
+                                    Manav leads our technical vision, specializing in scalable cloud architecture and advanced security systems.
+                                </p>
+                            </div>
+
+                            <!-- Team Member 3: COO -->
+                            <div class="text-center p-6 bg-indigo-50 rounded-xl shadow-md transition duration-300 hover:shadow-lg" role="listitem">
+                                <img src="https://placehold.co/150x150/6366f1/ffffff?text=COO" onerror="this.onerror=null; this.src='https://placehold.co/150x150/6366f1/ffffff?text=COO_Fallback';" alt="Portrait of Ashwin Sharma, Chief Operating Officer" 
+                                     class="w-36 h-36 rounded-full mx-auto mb-4 object-cover border-4 border-indigo-300">
+                                <h4 class="text-xl font-bold text-gray-900">Ashwin Sharma</h4>
+                                <p class="text-indigo-600 font-medium mb-3">Chief Operating Officer</p>
+                                <p class="text-sm text-gray-600">
+                                    Ashwin ensures operational efficiency across all client projects, driving timely and successful project completion.
+                                </p>
+                            </div>
+                            
+                            <!-- Team Member 4: CFO -->
+                            <div class="text-center p-6 bg-indigo-50 rounded-xl shadow-md transition duration-300 hover:shadow-lg" role="listitem">
+                                <img src="https://placehold.co/150x150/6366f1/ffffff?text=CFO" onerror="this.onerror=null; this.src='https://placehold.co/150x150/6366f1/ffffff?text=CFO_Fallback';" alt="Portrait of Prakash Roy, Chief Financial Officer" 
+                                     class="w-36 h-36 rounded-full mx-auto mb-4 object-cover border-4 border-indigo-300">
+                                <h4 class="text-xl font-bold text-gray-900">Prakash Roy</h4>
+                                <p class="text-indigo-600 font-medium mb-3">Chief Financial Officer</p>
+                                <p class="text-sm text-gray-600">
+                                    Prakash manages all financial strategy, planning, and reporting, ensuring sustainable fiscal health and growth.
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </section>
+            `,
+            contact: `
+                <section class="page-content bg-white p-8 rounded-xl shadow-2xl max-w-2xl mx-auto border-t-8 border-indigo-600" aria-labelledby="contact-heading">
+                    <h2 id="contact-heading" class="text-4xl font-bold text-gray-900 mb-2 text-center">Start a Conversation</h2>
+                    <p class="text-lg text-gray-600 mb-8 text-center">Tell us about your project or partnership inquiry. We typically respond within one business day.</p>
+                    
+                    <!-- Contact Form -->
+                    <form id="contact-form" onsubmit="submitContactForm(event)" class="space-y-6" novalidate>
+                        
+                        <!-- Name and Email (Responsive Dual Column) -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
+                                <input type="text" id="name" name="name" required 
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 shadow-sm" 
+                                       placeholder="Ram Sharma" aria-required="true">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address <span class="text-red-500">*</span></label>
+                                <input type="email" id="email" name="email" required 
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 shadow-sm" 
+                                       placeholder="ramsharma@gmail.com" aria-required="true">
+                            </div>
+                        </div>
+                        
+                        <!-- Phone Number -->
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number (Optional)</label>
+                            <input type="tel" id="phone" name="phone" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 shadow-sm" 
+                                   placeholder="+91 1234567890">
+                        </div>
+
+
+                        <!-- Subject -->
+                        <div>
+                            <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject <span class="text-red-500">*</span></label>
+                            <input type="text" id="subject" name="subject" required 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 shadow-sm" 
+                                   placeholder="Project Inquiry, Support, or Partnership" aria-required="true">
+                        </div>
+
+                        <!-- Message -->
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Your Message <span class="text-red-500">*</span></label>
+                            <textarea id="message" name="message" rows="4" required 
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 shadow-sm" 
+                                      placeholder="Detail your request here..." aria-required="true"></textarea>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div>
+                            <button type="submit" 
+                                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300">
+                                Send Message
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <p class="text-xs text-gray-400 mt-4 text-center">
+                        <small>Data stored securely using Firebase Firestore.</small>
+                    </p>
+                </section>
+            `
+        };
+
+        const contentArea = document.getElementById('app-content');
+
+        /**
+         * Renders the specified page content into the main area.
+         * @param {string} pageKey - The key corresponding to the page in the pageContent object.
+         */
+        window.renderPage = function(pageKey) {
+            hideServiceDetail();
+            
+            const content = window.pageContent[pageKey] || window.pageContent.home;
+            const currentContent = contentArea.querySelector('.page-content');
+            
+            if (currentContent) {
+                currentContent.classList.remove('active');
+            }
+
+            setTimeout(() => {
+                contentArea.innerHTML = content;
+
+                const newContent = contentArea.querySelector('.page-content');
+                if (newContent) {
+                    void newContent.offsetWidth; 
+                    newContent.classList.add('active');
+                    contentArea.focus(); 
+                }
+            }, currentContent ? 500 : 0); 
+
+            window.location.hash = '#' + pageKey;
+            updateActiveNav(pageKey);
+            
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                mobileMenuButton.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        /**
+         * Updates the visual state of the navigation links.
+         */
+        function updateActiveNav(activeKey) {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('data-page') === activeKey) {
+                    // Special styling for the contact button
+                    if (activeKey === 'contact') {
+                        link.classList.add('bg-indigo-700', 'text-white');
+                        link.classList.remove('bg-indigo-600', 'text-white');
+                    } else {
+                        link.classList.add('bg-indigo-100', 'text-indigo-700');
+                        link.classList.remove('text-gray-700', 'hover:text-indigo-600', 'bg-indigo-600', 'text-white');
+                    }
+                    link.setAttribute('aria-current', 'page');
+                } else {
+                    if (link.getAttribute('data-page') === 'contact') {
+                        link.classList.add('bg-indigo-600', 'text-white');
+                        link.classList.remove('bg-indigo-700');
+                    } else {
+                        link.classList.remove('bg-indigo-100', 'text-indigo-700');
+                        link.classList.add('text-gray-700', 'hover:text-indigo-600');
+                    }
+                    link.removeAttribute('aria-current');
+                }
+            });
+        }
+
+        // 3.2. EVENT LISTENERS
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile Menu Toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuButton.addEventListener('click', () => {
+                const isHidden = mobileMenu.classList.toggle('hidden');
+                mobileMenuButton.setAttribute('aria-expanded', isHidden ? 'false' : 'true');
+            });
+
+            // Navigation Links setup
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageKey = e.target.getAttribute('data-page');
+                    if (pageKey) {
+                        renderPage(pageKey);
+                    }
+                });
+            });
+
+            // Close modals on Escape key press
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (document.getElementById('service-detail-modal').classList.contains('visible')) {
+                        hideServiceDetail();
+                    }
+                    if (document.getElementById('message-box').classList.contains('visible')) {
+                        hideMessage();
+                    }
+                }
+            });
+
+            // Initial Page Load based on URL hash
+            const initialPage = window.location.hash ? window.location.hash.substring(1) : 'home';
+            renderPage(initialPage);
+        });
+
+    </script>
+</body>
+</html>
